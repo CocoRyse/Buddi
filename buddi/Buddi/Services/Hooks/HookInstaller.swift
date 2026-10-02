@@ -8,7 +8,7 @@
 import Foundation
 import os
 
-private let logger = os.Logger(subsystem: "com.splab.buddi", category: "HookInstaller")
+private let logger = os.Logger(subsystem: "com.cocoryse.buddi", category: "HookInstaller")
 
 struct HookInstaller {
 
@@ -17,7 +17,7 @@ struct HookInstaller {
         let claudeDir = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent(".claude")
         let hooksDir = claudeDir.appendingPathComponent("hooks")
-        let pythonScript = hooksDir.appendingPathComponent("buddi-hook.py")
+        let pythonScript = hooksDir.appendingPathComponent("buddi-cocoryse-hook.py")
         let settings = claudeDir.appendingPathComponent("settings.json")
 
         do {
@@ -29,7 +29,7 @@ struct HookInstaller {
             logger.error("Failed to create hooks dir: \(error.localizedDescription, privacy: .public)")
         }
 
-        if let bundled = Bundle.main.url(forResource: "buddi-hook", withExtension: "py") {
+        if let bundled = Bundle.main.url(forResource: "buddi-cocoryse-hook", withExtension: "py") {
             do {
                 try? FileManager.default.removeItem(at: pythonScript)  // may not exist yet
                 try FileManager.default.copyItem(at: bundled, to: pythonScript)
@@ -61,7 +61,7 @@ struct HookInstaller {
         }
 
         let python = detectPython()
-        let command = "\(python) ~/.claude/hooks/buddi-hook.py"
+        let command = "\(python) ~/.claude/hooks/buddi-cocoryse-hook.py"
         let hookEntry: [[String: Any]] = [["type": "command", "command": command]]
         let hookEntryWithTimeout: [[String: Any]] = [["type": "command", "command": command, "timeout": 86400]]
         let withMatcher: [[String: Any]] = [["matcher": "*", "hooks": hookEntry]]
@@ -94,7 +94,7 @@ struct HookInstaller {
                     if let entryHooks = entry["hooks"] as? [[String: Any]] {
                         return entryHooks.contains { h in
                             let cmd = h["command"] as? String ?? ""
-                            return cmd.contains("buddi-hook.py")
+                            return cmd.contains("buddi-cocoryse-hook.py")
                         }
                     }
                     return false
@@ -139,7 +139,7 @@ struct HookInstaller {
                     if let entryHooks = entry["hooks"] as? [[String: Any]] {
                         for hook in entryHooks {
                             if let cmd = hook["command"] as? String,
-                               cmd.contains("buddi-hook.py") {
+                               cmd.contains("buddi-cocoryse-hook.py") {
                                 return true
                             }
                         }
@@ -155,7 +155,7 @@ struct HookInstaller {
         let claudeDir = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent(".claude")
         let hooksDir = claudeDir.appendingPathComponent("hooks")
-        let pythonScript = hooksDir.appendingPathComponent("buddi-hook.py")
+        let pythonScript = hooksDir.appendingPathComponent("buddi-cocoryse-hook.py")
         let settings = claudeDir.appendingPathComponent("settings.json")
 
         try? FileManager.default.removeItem(at: pythonScript)
@@ -172,7 +172,7 @@ struct HookInstaller {
                     if let entryHooks = entry["hooks"] as? [[String: Any]] {
                         return entryHooks.contains { hook in
                             let cmd = hook["command"] as? String ?? ""
-                            return cmd.contains("buddi-hook.py")
+                            return cmd.contains("buddi-cocoryse-hook.py")
                         }
                     }
                     return false

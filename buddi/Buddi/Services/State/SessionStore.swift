@@ -16,7 +16,7 @@ actor SessionStore {
     static let shared = SessionStore()
 
     /// Logger for session store (nonisolated static for cross-context access)
-    nonisolated static let logger = os.Logger(subsystem: "com.splab.buddi", category: "Session")
+    nonisolated static let logger = os.Logger(subsystem: "com.cocoryse.buddi", category: "Session")
 
     // MARK: - State
 

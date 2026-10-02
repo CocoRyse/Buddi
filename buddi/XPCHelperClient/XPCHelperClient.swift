@@ -5,7 +5,7 @@ import AsyncXPCConnection
 final class XPCHelperClient: NSObject {
     nonisolated static let shared = XPCHelperClient()
     
-    private let serviceName = "com.talkvalue.buddi.XPCHelper"
+    private let serviceName = "com.cocoryse.buddi.XPCHelper"
     
     private var remoteService: RemoteXPCService<BuddiXPCHelperProtocol>?
     private var connection: NSXPCConnection?

@@ -11,7 +11,7 @@ import Foundation
 import os
 
 /// Logger for hook socket server
-private let logger = os.Logger(subsystem: "com.splab.buddi", category: "Hooks")
+private let logger = os.Logger(subsystem: "com.cocoryse.buddi", category: "Hooks")
 
 /// Event received from Claude Code hooks
 struct HookEvent: Codable, Sendable {
@@ -114,13 +114,13 @@ typealias PermissionFailureHandler = @Sendable (_ sessionId: String, _ toolUseId
 /// Uses GCD DispatchSource for non-blocking I/O
 class HookSocketServer {
     static let shared = HookSocketServer()
-    static let socketPath = "/tmp/buddi.sock"
+    static let socketPath = "/tmp/buddi-cocoryse.sock"
 
     private var serverSocket: Int32 = -1
     private var acceptSource: DispatchSourceRead?
     private var eventHandler: HookEventHandler?
     private var permissionFailureHandler: PermissionFailureHandler?
-    private let queue = DispatchQueue(label: "com.buddi.socket", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "com.cocoryse.buddi.socket", qos: .userInitiated)
 
     /// Pending permission requests indexed by toolUseId
     private var pendingPermissions: [String: PendingPermission] = [:]

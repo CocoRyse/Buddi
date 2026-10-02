@@ -19,7 +19,7 @@ struct HUDsTip: Tip {
     
     
     var image: Image? {
-        AppIcon(for: "com.talkvalue.buddi")
+        AppIcon(for: "com.cocoryse.buddi")
     }
     
     var actions: [Action] {
@@ -41,7 +41,7 @@ struct CBTip: Tip {
     
     
     var image: Image? {
-        AppIcon(for: "com.talkvalue.buddi")
+        AppIcon(for: "com.cocoryse.buddi")
     }
     
     var actions: [Action] {

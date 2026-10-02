@@ -23,7 +23,7 @@ actor ConversationParser {
     static let shared = ConversationParser()
 
     /// Logger for conversation parser (nonisolated static for cross-context access)
-    nonisolated static let logger = os.Logger(subsystem: "com.splab.buddi", category: "Parser")
+    nonisolated static let logger = os.Logger(subsystem: "com.cocoryse.buddi", category: "Parser")
 
     /// Cache of parsed conversation info, keyed by session file path
     private var cache: [String: CachedInfo] = [:]

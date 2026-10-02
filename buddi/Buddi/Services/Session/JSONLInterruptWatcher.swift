@@ -10,7 +10,7 @@ import Foundation
 import os
 
 /// Logger for interrupt watcher
-private let logger = os.Logger(subsystem: "com.splab.buddi", category: "Interrupt")
+private let logger = os.Logger(subsystem: "com.cocoryse.buddi", category: "Interrupt")
 
 protocol JSONLInterruptWatcherDelegate: AnyObject {
     func didDetectInterrupt(sessionId: String)
@@ -24,7 +24,7 @@ class JSONLInterruptWatcher {
     private var lastOffset: UInt64 = 0
     private let sessionId: String
     private let filePath: String
-    private let queue = DispatchQueue(label: "com.buddi.interruptwatcher", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "com.cocoryse.buddi.interruptwatcher", qos: .userInteractive)
 
     weak var delegate: JSONLInterruptWatcherDelegate?
 

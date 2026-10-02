@@ -13,7 +13,7 @@ actor ToolApprovalHandler {
     static let shared = ToolApprovalHandler()
 
     /// Logger for tool approval (nonisolated static for cross-context access)
-    nonisolated static let logger = os.Logger(subsystem: "com.splab.buddi", category: "Approval")
+    nonisolated static let logger = os.Logger(subsystem: "com.cocoryse.buddi", category: "Approval")
 
     private init() {}
 
