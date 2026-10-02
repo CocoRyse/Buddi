@@ -205,6 +205,5 @@ extension Defaults.Keys {
     static let buddyEyeOverride = Key<String?>("buddyEyeOverride", default: nil)
     static let buddyHatOverride = Key<String?>("buddyHatOverride", default: nil)
     static let buddyRarityOverride = Key<String?>("buddyRarityOverride", default: nil)
-    static let roamingPetEnabled = Key<Bool>("roamingPetEnabled", default: true)
     static let notificationSound = Key<String>("notificationSound", default: "Pop")
 }

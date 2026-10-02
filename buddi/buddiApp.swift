@@ -475,8 +475,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         BuddiSessionBridge.shared.startMonitoring()
         UsageService.shared.startPolling()
         QuotaReactionService.shared.start()
-        PetRoamer.shared.start()
-
 
 
 
