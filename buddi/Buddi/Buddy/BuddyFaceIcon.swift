@@ -1,30 +1,41 @@
+import Lottie
 import SwiftUI
 
-/// Replaces ClaudeCrabIcon — renders the buddy's one-line face in monospace with blink animation.
+/// Closed-notch mini face. Task-aware: plays the buddy's Lottie art when the
+/// species has it (scaled to the notch), otherwise renders the one-line ASCII
+/// face driven by the shared animator.
 struct BuddyFaceIcon: View {
     var fontSize: CGFloat = 10
     var animated: Bool = true
 
+    @ObservedObject private var animator = BuddyManager.shared.animator
+
     private var identity: BuddyIdentity { BuddyManager.shared.effectiveIdentity }
 
-    private static let blinkSequence = [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0]
-
     var body: some View {
-        TimelineView(.animation(minimumInterval: 0.3, paused: !animated)) { timeline in
-            let tick = animated ? Int(timeline.date.timeIntervalSinceReferenceDate / 0.3) : 0
-            let idx = tick % Self.blinkSequence.count
-            let isBlinking = Self.blinkSequence[idx] == 1
-
-            let displayFace = isBlinking
-                ? SpriteData.face(species: identity.species, eye: identity.eye)
-                    .replacingOccurrences(of: identity.eye.rawValue, with: "-")
-                : SpriteData.face(species: identity.species, eye: identity.eye)
-
-            Text(displayFace)
+        let task = animator.effectiveTask
+        if BuddyArtLibrary.hasArt(for: identity.species),
+           let animation = miniAnimation(for: task) {
+            BuddyLottieView(animation: animation)
+                .aspectRatio(BuddyArtLibrary.aspectRatio(of: animation), contentMode: .fit)
+                .frame(height: fontSize * 2.2)
+        } else {
+            Text(SpriteFrameLogic.oneLineFace(for: task, species: identity.species, eye: identity.eye))
                 .font(.system(size: fontSize, weight: .medium, design: .monospaced))
-                .foregroundColor(Color(nsColor: identity.rarity.nsColor))
+                .foregroundColor(faceColor)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
+    }
+
+    /// Task art when it exists, idle art otherwise (tasks without art producers).
+    private func miniAnimation(for task: BuddyTask) -> LottieAnimation? {
+        BuddyArtLibrary.lottieAnimation(for: identity.species, task: task)
+            ?? BuddyArtLibrary.idleAnimation(for: identity.species)
+    }
+
+    private var faceColor: Color {
+        if animator.effectiveTask == .error || animator.effectiveTask == .panic { return .red }
+        return Color(nsColor: identity.rarity.nsColor)
     }
 }

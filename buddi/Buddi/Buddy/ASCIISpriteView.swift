@@ -1,26 +1,5 @@
 import SwiftUI
 
-/// Renders the ASCII buddy face using Menlo 16px.
-struct ASCIISpriteView: View {
-    @ObservedObject var animator: SpriteAnimator
-    let rarity: BuddyRarity
-    let isError: Bool
-
-    var body: some View {
-        Text(animator.frameString)
-            .font(.system(size: 16, design: .monospaced))
-            .foregroundColor(textColor)
-            .lineLimit(1)
-            .fixedSize()
-            .drawingGroup()
-    }
-
-    private var textColor: Color {
-        if isError { return .red }
-        return Color(nsColor: rarity.nsColor)
-    }
-}
-
 /// Multi-line animated sprite view for the expanded panel.
 /// Uses TimelineView for smooth frame cycling.
 struct ASCIIFullSpriteView: View {

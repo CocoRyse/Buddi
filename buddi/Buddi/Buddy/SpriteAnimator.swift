@@ -13,18 +13,29 @@ final class SpriteAnimator: ObservableObject {
     @Published private(set) var frameString: String = ""
     @Published private(set) var oneLine: String = ""
 
-    /// Base task driven by session phase. A transient `flash` reaction temporarily overrides
-    /// what is rendered, then reverts to this base.
+    /// Base task driven by session phase. Overridden by `quotaTask` (persistent quota mood)
+    /// and transient `flash` reactions. Render priority: flash > quotaTask > task.
     var task: BuddyTask = .idle {
         didSet {
             guard task != oldValue else { return }
             // While a flash is showing, keep the new base for when the flash ends.
-            if flashCountdown == 0 { applyEffective(task) }
+            recomputeEffective()
         }
     }
 
-    /// Show a transient reaction (e.g. `.error`) for a few ticks, then revert to `task`.
+    /// Persistent mood driven by plan quota (e.g. `.panic` while utilization > 80%).
+    /// Cleared by setting back to nil. Sits between the base task and flashes.
+    var quotaTask: BuddyTask? {
+        didSet {
+            guard quotaTask != oldValue else { return }
+            recomputeEffective()
+        }
+    }
+
+    /// Show a transient reaction (e.g. `.error`) for a few ticks, then revert to
+    /// `quotaTask ?? task`.
     func flash(_ reaction: BuddyTask, ticks: Int = 5) {
+        flashTask = reaction
         flashCountdown = ticks
         applyEffective(reaction)
     }
@@ -35,12 +46,17 @@ final class SpriteAnimator: ObservableObject {
             updateFrame()
         }
     }
-    /// The task actually being rendered (base task, or an active flash reaction).
-    /// Views should read this (not `task`) so transient flashes are visible.
-    private(set) var effectiveTask: BuddyTask = .idle
+    /// The task actually being rendered (base task, quota mood, or an active flash reaction).
+    /// Views should read this (not `task`) so transient flashes and quota moods are visible.
+    @Published private(set) var effectiveTask: BuddyTask = .idle
     private var tick: Int = 0
     private var timer: Timer?
     private var flashCountdown: Int = 0
+    private var flashTask: BuddyTask?
+
+    private func recomputeEffective() {
+        applyEffective((flashCountdown > 0 ? flashTask : nil) ?? quotaTask ?? task)
+    }
 
     private func applyEffective(_ newTask: BuddyTask) {
         guard newTask != effectiveTask else { return }
@@ -79,7 +95,8 @@ final class SpriteAnimator: ObservableObject {
         if flashCountdown > 0 {
             flashCountdown -= 1
             if flashCountdown == 0 {
-                applyEffective(task)  // flash ended — revert to the base task
+                flashTask = nil
+                applyEffective(quotaTask ?? task)  // flash ended — revert past the quota mood
                 return
             }
         }
@@ -111,6 +128,9 @@ final class SpriteAnimator: ObservableObject {
         case .sleeping: 1.2   // 1.2s zzz scroll
         case .error: 0.5      // 500ms
         case .success: 0.5    // 500ms countdown
+        case .panic: 0.3      // 300ms frantic shake
+        case .nervous: 0.45   // 450ms fidget
+        case .celebrate: 0.25 // 250ms party
         }
     }
 }
@@ -167,6 +187,24 @@ enum SpriteFrameLogic {
 
         case .success:
             return baseFace + " \u{2713}"
+
+        case .panic:
+            // Wide-eyed alarm with frantic side jitter.
+            let jitter = tick % 2 == 0 ? "\\" : "/"
+            return errorFace(baseFace, eye: eye) + jitter + jitter
+
+        case .nervous:
+            // Glancing sideways, small dots of doubt.
+            let phase = tick % 3
+            if phase == 1 {
+                return shiftEyeRight(baseFace, eye: eye) + ".."
+            }
+            return baseFace + ".."
+
+        case .celebrate:
+            // Sparkle rotation around the happy face.
+            let sparkles = ["*", "+", "✦", "+"]
+            return baseFace + " " + sparkles[tick % sparkles.count]
         }
     }
 

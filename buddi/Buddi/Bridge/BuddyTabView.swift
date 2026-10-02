@@ -45,10 +45,10 @@ struct BuddyTabView: View {
     private var homeContent: some View {
         HStack(alignment: .top, spacing: 15) {
             VStack(spacing: 3) {
-                ASCIIFullSpriteView(
+                BuddySpriteView(
                     animator: BuddyManager.shared.animator,
                     identity: BuddyManager.shared.effectiveIdentity,
-                    fontSize: 8
+                    asciiFontSize: 8
                 )
 
                 Text(BuddyManager.shared.effectiveIdentity.name

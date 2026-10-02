@@ -187,10 +187,10 @@ struct MeetBuddyOnboardingView: View {
 
     var body: some View {
         VStack(spacing: 28) {
-            ASCIIFullSpriteView(
+            BuddySpriteView(
                 animator: BuddyManager.shared.animator,
                 identity: identity,
-                fontSize: 18
+                asciiFontSize: 18
             )
             .padding(.top, 32)
 
