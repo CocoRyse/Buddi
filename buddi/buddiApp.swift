@@ -474,6 +474,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         HookInstaller.installIfNeeded()
         BuddiSessionBridge.shared.startMonitoring()
         UsageService.shared.startPolling()
+        QuotaReactionService.shared.start()
+        PetRoamer.shared.start()
 
 
 
