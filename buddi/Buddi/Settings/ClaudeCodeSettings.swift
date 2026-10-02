@@ -32,6 +32,18 @@ struct ClaudeCodeSettings: View {
         speciesOverride != nil || eyeOverride != nil || hatOverride != nil || rarityOverride != nil
     }
 
+    private var usageSourceLabel: String {
+        switch usageService.activeSource {
+        case .glm:
+            let tier = usageService.planTier.map { " · \($0.capitalized)" } ?? ""
+            return "GLM Coding Plan\(tier)"
+        case .anthropicOAuth:
+            return "Anthropic OAuth"
+        case nil:
+            return "Connected"
+        }
+    }
+
     var body: some View {
         Form {
             Section {
@@ -84,7 +96,7 @@ struct ClaudeCodeSettings: View {
                 HStack {
                     Text("Socket")
                     Spacer()
-                    let active = FileManager.default.fileExists(atPath: "/tmp/buddi.sock")
+                    let active = FileManager.default.fileExists(atPath: HookSocketServer.socketPath)
                     Circle()
                         .fill(active ? Color.green : Color.red)
                         .frame(width: 8, height: 8)
@@ -99,7 +111,7 @@ struct ClaudeCodeSettings: View {
                         HStack(spacing: 4) {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
-                            Text("Connected")
+                            Text(usageSourceLabel)
                                 .foregroundStyle(.secondary)
                         }
                     } else {
@@ -110,7 +122,7 @@ struct ClaudeCodeSettings: View {
             } header: {
                 Text("Status")
             } footer: {
-                Text("OAuth login required for plan usage display.")
+                Text("Reads ANTHROPIC_AUTH_TOKEN (GLM Coding Plan) from ~/.claude/settings.json; falls back to Claude Code Anthropic OAuth.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
