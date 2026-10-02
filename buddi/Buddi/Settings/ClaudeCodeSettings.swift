@@ -11,6 +11,7 @@ struct ClaudeCodeSettings: View {
     @Default(.buddyEyeOverride) private var eyeOverride
     @Default(.buddyHatOverride) private var hatOverride
     @Default(.buddyRarityOverride) private var rarityOverride
+    @Default(.roamingPetEnabled) private var roamingPetEnabled
 
     private var currentSpecies: BuddySpecies {
         buddyManager.effectiveIdentity.species
@@ -138,6 +139,14 @@ struct ClaudeCodeSettings: View {
             }
 
             Section {
+                Toggle("Roaming pet", isOn: $roamingPetEnabled)
+            } footer: {
+                Text("Your buddy walks along the menu bar.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
                 buddySpeciesGrid
             } header: {
                 Text("Species")
@@ -206,10 +215,10 @@ struct ClaudeCodeSettings: View {
     private var buddyPreview: some View {
         HStack {
             Spacer()
-            ASCIIFullSpriteView(
+            BuddySpriteView(
                 animator: buddyManager.animator,
                 identity: buddyManager.effectiveIdentity,
-                fontSize: 14
+                asciiFontSize: 14
             )
             Spacer()
         }
